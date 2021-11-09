@@ -1,13 +1,12 @@
 {
-    "name": "ainz-greeter-bot",
+    "name": "hallowsong-bot",
     "version": "1.0.0",
-    "description": "Discord Greeter Bot for AINZ FC",
+    "description": "Discord Greeter Bot for Hallowsong",
     "main": "bot.js",
     "author": "Mackenzie Clark",
     "dependencies": {
         "@discordjs/uws": "^10.149.0",
         "discord.js": "^11.5.1",
-        "dotenv": "^8.2.0",
         "express": "^4.17.1"
     }
 }

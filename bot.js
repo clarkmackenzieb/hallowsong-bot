@@ -1,23 +1,19 @@
 
 const Discord = require('discord.js');
 const client = new Discord.Client();
-var express = require('express');
-var app = express();
-require('dotenv').config();
+const express = require('express');
+const app = express();
 
-const lordMomongaId = "663446622759288833";
+const botId = process.env.BOT_ID;
 
-const ainzWelcomeChannelId = "483910193399463936";
-const ainzAffiliateRoleId = "525081179444215828";
-const ainzMemberRoleId = "525080674219196428";
-
-const ainzRoleString = "ainz";
+const testChannelId = process.env.CHANNEL_ID;
+const testMemberRoleId = process.env.ROLE_ID;
 
 const host = '0.0.0.0';
 const port = process.env.PORT || 3005;
 
 app.listen(port, host, function() {
-  console.log("Server started.......");
+  console.log(`I'll be right by your side till ${port}`);
 })
 
 client.on('ready', () => {
@@ -27,65 +23,27 @@ client.on('ready', () => {
 client.login(process.env.TOKEN);
 
   client.on('guildMemberAdd', member => {
-    const welcomeChannel = member.guild.channels.find(ch => ch.id === ainzWelcomeChannelId);
     // Do nothing if the channel wasn't found on this server
-    if (!welcomeChannel) return;
+    if (!testChannelId) return;
     // Send the message, mentioning the member
-    welcomeChannel.send(`Welcome, ${member}! Please mention me with your final fantasy name and FC tag in the following format "@OverlordMomonga, Kanu Lynx, AINZ" so we can set your role and FC correctly.`);
+    testChannelId.send(`Hallowsong welcomes you, ${member}! Please mention me with your name in the following format "@Hallowsong Bot, Cherry Cheesecake" so we can set your nickname and role.`);
   });
 
   client.on('message', msg => {
     const currentChannel = msg.channel;
     let currentUser;
     
-    if (msg.content.indexOf(lordMomongaId) !== -1) {
+    if (msg.content.indexOf(botId) !== -1) {
       if (msg.content.split(',').length > 1) {
-        currentUser = msg.guild.members.get(msg.author.id);
-        currentUser.setNickname(getNewNickname(msg, currentUser));
+        const testMessageContent = msg.content.split(',')[1].trim();
+        currentUser = msg.member;
+        member.roles.add(testMemberRoleId);
+        await currentUser.setNickname(testMessageContent).catch(err => console.log(err));
       } else {
         logError(currentChannel, 'cannot read message');
       }
     }
   });
-
-  getNewNickname = (msg, currentUser) => {
-    const testMessageContent = msg.content.split(',')[1];
-    if (testMessageContent.length > 0) {
-      const guildTag = getNewGuildTag(msg, currentUser) || '';
-      return `${testMessageContent}${guildTag}`;
-    } else {
-      msg.guild.channels.find(ch => ch.id === ainzWelcomeChannelId);
-      logError(msg.channel, 'cannot set nickname');
-    }
-  };
-
-  getNewGuildTag = (msg, currentUser) => {
-    const testMessageContent = msg.content.split(',');
-    if (testMessageContent[2]) {
-      setMemberRole(msg, testMessageContent[2].trim(), currentUser);
-      return ` <${testMessageContent[2].trim()}>`;
-    } else {
-      channel = msg.guild.channels.find(ch => ch.id === ainzWelcomeChannelId);
-      logError(msg.channel, 'cannot set FC tag.');
-      return '';
-    }
-  }
-
-  setMemberRole = (msg, role, currentUser) => {
-    const channel = msg.guild.channels.find(ch => ch.id === ainzWelcomeChannelId);
-    if (!role) {
-      channel.send("Error setting role.");
-      return;
-    }
-    role = role.toLowerCase();
-    if (role.indexOf(ainzRoleString) > -1) {
-      currentUser.addRole(ainzMemberRoleId);
-    } else if (role.indexOf(ainzRoleString) < 0) {
-      currentUser.addRole(ainzAffiliateRoleId);
-    } else {
-      channel.send("Error setting role.");
-    }
-  }
 
   logError = (channel, message) => {
     channel.send(`Error: ${message}`);
